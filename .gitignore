@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+
+# ML Files
+Backend/ml_model/random_forest_model.pkl
+Backend/ml_model/scaler.pkl
+
+# Jupyter Notebook
+Backend/ml_model/.ipynb_checkpoints/
+
+# Miscellaneous
+*.log
+.DS_Store
