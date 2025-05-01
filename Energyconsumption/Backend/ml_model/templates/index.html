@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Consumption Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Environmental Details</h2>
+    <form id="prediction-form">
+        <label for="lights">Lights Usage (W):</label>
+        <input type="number" id="lights" step="0.01" required><br>
+
+        <label for="T_in">Indoor Temperature (°C):</label>
+        <input type="number" id="T_in" step="0.01" required><br>
+
+        <label for="RH_in">Indoor Humidity (%):</label>
+        <input type="number" id="RH_in" step="0.01" required><br>
+
+        <label for="T_out">Outdoor Temperature (°C):</label>
+        <input type="number" id="T_out" step="0.01" required><br>
+
+        <label for="Windspeed">Wind Speed (m/s):</label>
+        <input type="number" id="Windspeed" step="0.01" required><br>
+
+        <button type="submit">Predict Appliance Lights Usage</button>
+    </form>
+
+    <div id="error-message" class="error" style="display: none;"></div>
+
+    <script>
+        document.getElementById("prediction-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Collect form data
+            let data = {
+                lights: parseFloat(document.getElementById("lights").value),
+                T_in: parseFloat(document.getElementById("T_in").value),
+                RH_in: parseFloat(document.getElementById("RH_in").value),
+                T_out: parseFloat(document.getElementById("T_out").value),
+                Windspeed: parseFloat(document.getElementById("Windspeed").value)
+            };
+
+            // Send data to the backend
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    let errorDiv = document.getElementById("error-message");
+                    errorDiv.innerText = "Error: " + data.error;
+                    errorDiv.style.display = "block";
+                } else {
+                    // Construct query parameters with input values and prediction results
+                    const queryParams = new URLSearchParams({
+                        lights: data.lights,
+                        T_in: data.T_in,
+                        RH_in: data.RH_in,
+                        T_out: data.T_out,
+                        Windspeed: data.Windspeed,
+                        predicted_consumption: data.predicted_consumption,
+                        suggestion: data.suggestion
+                    }).toString();
+
+                    // Redirect to the dashboard with query parameters
+                    window.location.href = `dashboard.html?${queryParams}`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                let errorDiv = document.getElementById("error-message");
+                errorDiv.innerText = "Error: Unable to connect to the server.";
+                errorDiv.style.display = "block";
+            });
+        });
+    </script>
+</body>
+</html>

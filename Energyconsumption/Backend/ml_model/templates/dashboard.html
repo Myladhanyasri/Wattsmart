@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Consumption Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --device-bg: #f8f9fc;
+        }
+
+        [data-bs-theme="dark"] {
+            --primary-color: #6e8eff;
+            --success-color: #2ee6a6;
+            --warning-color: #ffca3a;
+            --danger-color: #ff5a5a;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #f0f0f0;
+            --device-bg: #2c2c2c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            font-weight: bold;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+        }
+
+        .text-warning {
+            color: var(--warning-color) !important;
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+
+        .device-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: var(--device-bg);
+        }
+
+        .device-on {
+            color: var(--success-color);
+        }
+
+        .device-off {
+            color: #858796;
+        }
+
+        .recommendations {
+            background-color: var(--device-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .insights-card {
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 15px;
+            background-color: var(--device-bg);
+            padding: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+
+        .nav-link {
+            color: var(--primary-color);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .tab-content {
+            padding: 20px 0;
+        }
+
+        .appliance-card {
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--device-bg);
+            transition: transform 0.3s;
+        }
+
+        .appliance-card:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-bolt me-2"></i>Wattsmart</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#appliances">Appliances</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#insights">Insights</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact Us</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="theme-toggle me-3" id="themeToggle">
+                        <i class="fas fa-sun me-2"></i>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                        </div>
+                        <i class="fas fa-moon ms-2"></i>
+                    </div>
+                    <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                    <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4" id="dashboard">
+        <h1 class="mb-4 text-center">Energy Consumption Dashboard</h1>
+        
+        <!-- Top Stats Row -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="stat-card">
+                        <i class="fas fa-bolt fa-2x text-primary"></i>
+                        <div class="stat-value" id="current-usage">0</div>
+                        <div>Current Usage (kW)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-day fa-2x text-success"></i>
+                        <div class="stat-value" id="today-usage">0</div>
+                        <div>Today's Usage (kWh)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign fa-2x text-warning"></i>
+                        <div class="stat-value" id="cost-today">$0</div>
+                        <div>Cost Today</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="stat-card">
+                        <i class="fas fa-leaf fa-2x text-danger"></i>
+                        <div class="stat-value" id="carbon-footprint">0</div>
+                        <div>Carbon Footprint (kg)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Real-time Energy Usage Chart -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        Real-time Energy Consumption
+                    </div>
+                    <div class="card-body">
+                        <canvas id="realTimeChart" width="100%" height="40"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Device Energy Usage Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        Device Energy Breakdown
+                    </div>
+                    <div class="card-body">
+                        <canvas id="deviceUsageChart" width="100%" height="475"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Weekly Usage Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        Weekly Energy Trends
+                    </div>
+                    <div class="card-body">
+                        <canvas id="weeklyUsageChart" width="100%" height="40"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">ML Model Prediction</div>
+                    <div class="card-body">
+                        <label for="lights">Lights Usage (W):</label>
+                        <input type="number" id="lights" class="form-control" placeholder="Enter lights usage" step="0.01">
+
+                        <label for="T_in">Indoor Temperature (°C):</label>
+                        <input type="number" id="T_in" class="form-control" placeholder="Enter indoor temperature" step="0.01">
+
+                        <label for="RH_in">Indoor Humidity (%):</label>
+                        <input type="number" id="RH_in" class="form-control" placeholder="Enter indoor humidity" step="0.01">
+
+                        <label for="T_out">Outdoor Temperature (°C):</label>
+                        <input type="number" id="T_out" class="form-control" placeholder="Enter outdoor temperature" step="0.01">
+
+                        <label for="Windspeed">Wind Speed (m/s):</label>
+                        <input type="number" id="Windspeed" class="form-control" placeholder="Enter wind speed" step="0.01">
+
+                        <button onclick="getPrediction()" class="btn btn-primary mt-2">Predict Energy Consumption</button>
+                        <h5 class="mt-3">Prediction: <span id="prediction-result">N/A</span></h5>
+                    </div>
+                </div>
+
+                <!-- ML Predictions Card -->
+                <div class="card">
+                    <div class="card-header">
+                        ML-Based Predictions
+                    </div>
+                    <div class="card-body">
+                        <h5>Forecasted Usage Tomorrow</h5>
+                        <div class="stat-value text-primary" id="ml-prediction">340 Wh</div>
+                        <h5 class="mt-3">Potential Savings</h5>
+                        <div class="stat-value text-success" id="ml-savings">17 Wh</div>
+                        <p class="mt-3"><strong>Accuracy:</strong> <span id="ml-accuracy">95%</span></p>
+                        <p><em>Last updated: <span id="ml-updated">Now</span></em></p>
+                    </div>
+                </div>
+                
+                <!-- Device Status Card -->
+                <div class="card">
+                    <div class="card-header">
+                        Device Status & Controls
+                    </div>
+                    <div class="card-body">
+                        <div class="device-status">
+                            <span><i class="fas fa-lightbulb device-on"></i> Living Room Lights</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="lightSwitch1" checked>
+                            </div>
+                        </div>
+                        <div class="device-status">
+                            <span><i class="fas fa-lightbulb device-off"></i> Bedroom Lights</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="lightSwitch2">
+                            </div>
+                        </div>
+                        <div class="device-status">
+                            <span><i class="fas fa-fan device-on"></i> Living Room Fan</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="fanSwitch1" checked>
+                            </div>
+                        </div>
+                        <div class="device-status">
+                            <span><i class="fas fa-fan device-off"></i> Bedroom Fan</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="fanSwitch2">
+                            </div>
+                        </div>
+                        <a href="#appliances" class="btn btn-primary w-100 mt-3">Manage All Appliances</a>
+                    </div>
+                </div>
+                
+                <!-- Recommendations Card -->
+                <div class="card">
+                    <div class="card-header">
+                        ML Recommendations
+                    </div>
+                    <div class="card-body">
+                        <div class="recommendations">
+                            <strong>Energy Saving Tip</strong>: Reduce light usage to save 5% energy.
+                        </div>
+                        <div class="recommendations">
+                            <strong>Living Room Light</strong>: Consider turning off, unused for 2 hours
+                        </div>
+                        <div class="recommendations">
+                            <strong>Optimize Fan Usage</strong>: Reduce speed during off-peak hours
+                        </div>
+                        <div class="recommendations">
+                            <strong>Predicted High Usage</strong>: Tomorrow 2-4 PM, consider scheduling activities outside this window
+                        </div>
+                        <a href="#insights" class="btn btn-success w-100 mt-3">View All Insights</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appliances Section -->
+    <div class="container py-4" id="appliances">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Your Appliances</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addApplianceModal">
+                    <i class="fas fa-plus me-2"></i>Add New Appliance
+                </button>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-pills mb-3" id="appliance-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all-appliances" type="button" role="tab">All</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="lighting-tab" data-bs-toggle="pill" data-bs-target="#lighting-appliances" type="button" role="tab">Lighting</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="hvac-tab" data-bs-toggle="pill" data-bs-target="#hvac-appliances" type="button" role="tab">HVAC</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="kitchen-tab" data-bs-toggle="pill" data-bs-target="#kitchen-appliances" type="button" role="tab">Kitchen</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="entertainment-tab" data-bs-toggle="pill" data-bs-target="#entertainment-appliances" type="button" role="tab">Entertainment</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="appliance-tab-content">
+                    <div class="tab-pane fade show active" id="all-appliances" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-lightbulb text-warning me-2"></i>Living Room Lamp</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Smart LED Bulb - Phillips Hue</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 9W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 5h 23m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-tv text-dark me-2"></i>Smart TV</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Samsung 55" QLED</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 120W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 3h 45m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-snowflake text-info me-2"></i>AC Unit</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">LG Mini Split - 12,000 BTU</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1200W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 2h 15m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-blender text-success me-2"></i>Blender</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Vitamix Pro Series 750</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1440W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 10m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-utensils text-danger me-2"></i>Dishwasher</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Bosch 500 Series</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1800W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 1h 15m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-fan text-primary me-2"></i>Ceiling Fan</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Hunter Cavera 52"</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 75W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 8h 30m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="lighting-appliances" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-lightbulb text-warning me-2"></i>Living Room Lamp</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Smart LED Bulb - Phillips Hue</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 9W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 5h 23m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-lightbulb text-warning me-2"></i>Kitchen Lights</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Recessed Lighting (3 bulbs)</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 30W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 4h 10m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="hvac-appliances" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-snowflake text-info me-2"></i>AC Unit</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">LG Mini Split - 12,000 BTU</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1200W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 2h 15m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-fan text-primary me-2"></i>Ceiling Fan</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Hunter Cavera 52"</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 75W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 8h 30m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="kitchen-appliances" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-blender text-success me-2"></i>Blender</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Vitamix Pro Series 750</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1440W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 10m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-utensils text-danger me-2"></i>Dishwasher</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Bosch 500 Series</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 1800W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 1h 15m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="entertainment-appliances" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="appliance-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0"><i class="fas fa-tv text-dark me-2"></i>Smart TV</h5>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2">Samsung 55" QLED</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-bolt text-primary"></i> 120W</span>
+                                        <span><i class="fas fa-clock text-secondary"></i> 3h 45m today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insights Section -->
+    <div class="container py-4" id="insights">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Energy Insights</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="insights-card">
+                            <h4><i class="fas fa-lightbulb text-warning me-2"></i>Lighting Optimization</h4>
+                            <p class="mb-2">Your living room lights are often left on when no motion is detected. Consider installing motion sensors.</p>
+                            <p class="mb-0 text-success"><strong>Potential Savings: </strong>$12.43/month</p>
+                        </div>
+                        <div class="insights-card">
+                            <h4><i class="fas fa-plug text-danger me-2"></i>Standby Power Detection</h4>
+                            <p class="mb-2">We've detected unusually high standby power consumption between 1-5 AM. This may be due to devices not fully powered off.</p>
+                            <p class="mb-0 text-success"><strong>Potential Savings: </strong>$7.82/month</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="insights-card">
+                            <h4><i class="fas fa-clock text-primary me-2"></i>Peak Usage Analysis</h4>
+                            <p class="mb-2">Your peak energy usage occurs between 6-8 PM. Consider shifting high-energy tasks to off-peak hours for savings.</p>
+                            <p class="mb-0 text-success"><strong>Potential Savings: </strong>$18.65/month</p>
+                        </div>
+                        <div class="insights-card">
+                            <h4><i class="fas fa-snowflake text-info me-2"></i>HVAC Efficiency</h4>
+                            <p class="mb-2">Your AC runs frequently during unoccupied hours. Setting a programmable schedule could reduce consumption.</p>
+                            <p class="mb-0 text-success"><strong>Potential Savings: </strong>$32.19/month</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        Long-term Energy Analysis
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyComparisonChart" width="100%" height="400"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        Seasonal Adjustments Recommendation
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-temperature-low fa-4x text-info mb-3"></i>
+                                <h5>Winter (Dec-Feb)</h5>
+                                <p>Reduce heating costs by lowering thermostat by 2°F and using warmer bedding.</p>
+                                <p class="text-success"><strong>Est. Savings: </strong>$45.30/month</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-sun fa-4x text-warning mb-3"></i>
+                                <h5>Summer (Jun-Aug)</h5>
+                                <p>Use ceiling fans and set AC to 78°F for optimal comfort and efficiency.</p>
+                                <p class="text-success"><strong>Est. Savings: </strong>$62.15/month</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-leaf fa-4x text-success mb-3"></i>
+                                <h5>Spring/Fall</h5>
+                                <p>Open windows instead of using climate control when temperatures are moderate.</p>
+                                <p class="text-success"><strong>Est. Savings: </strong>$38.50/month</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Section -->
+    <div class="container py-4" id="contact">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Contact Support</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Your Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="your@email.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject</label>
+                                <select class="form-select" id="subject">
+                                    <option selected>Select a subject</option>
+                                    <option>Technical Support</option>
+                                    <option>Billing Question</option>
+                                    <option>Feature Request</option>
+                                    <option>General Inquiry</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Get in Touch</h4>
+                        <p>We're here to help you optimize your energy usage and answer any questions you may have about the Wattsmart platform.</p>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-envelope text-primary me-3 fa-2x"></i>
+                            <div>
+                                <h5 class="mb-0">Email Us</h5>
+                                <p class="mb-0">Trailblazers@Wattsmart.com</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-phone text-primary me-3 fa-2x"></i>
+                            <div>
+                                <h5 class="mb-0">Call Us</h5>
+                                <p class="mb-0">+91 985634356</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-comments text-primary me-3 fa-2x"></i>
+                            <div>
+                                <h5 class="mb-0">Live Chat</h5>
+                                <p class="mb-0">Available 24/7</p>
+                                <button class="btn btn-outline-primary mt-2">Start Chat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-light mt-4" style="background-color: var(--primary-color);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>Wattsmart</h5>
+                    <p class="mb-0">Smart energy monitoring for smarter living</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="#dashboard" class="text-light">Dashboard</a></li>
+                        <li><a href="#appliances" class="text-light">Appliances</a></li>
+                        <li><a href="#insights" class="text-light">Insights</a></li>
+                        <li><a href="#contact" class="text-light">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-3" style="background-color: rgba(255, 255, 255, 0.2);">
+            <p class="mb-0">© 2025 Wattsmart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login to Wattsmart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-decoration-none">Forgot Password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalLabel">Create an Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="signupName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="signupName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="signupEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="signupPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="signupConfirmPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="termsAgree" required>
+                            <label class="form-check-label" for="termsAgree">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Appliance Modal -->
+    <div class="modal fade" id="addApplianceModal" tabindex="-1" aria-labelledby="addApplianceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addApplianceModalLabel">Add New Appliance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="applianceName" class="form-label">Appliance Name</label>
+                            <input type="text" class="form-control" id="applianceName" placeholder="e.g., Living Room Fan" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="applianceType" class="form-label">Type</label>
+                            <select class="form-select" id="applianceType" required>
+                                <option value="">Select type</option>
+                                <option value="lighting">Lighting</option>
+                                <option value="hvac">HVAC</option>
+                                <option value="kitchen">Kitchen</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="applianceModel" class="form-label">Model (Optional)</label>
+                            <input type="text" class="form-control" id="applianceModel" placeholder="e.g., Samsung TV UN55">
+                        </div>
+                        <div class="mb-3">
+                            <label for="applianceWattage" class="form-label">Wattage (W)</label>
+                            <input type="number" class="form-control" id="applianceWattage" placeholder="e.g., 60" required>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="isSmartAppliance">
+                            <label class="form-check-label" for="isSmartAppliance">Smart Appliance</label>
+                        </div>
+                        <div id="smartApplianceFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="smartApplianceIP" class="form-label">IP Address</label>
+                                <input type="text" class="form-control" id="smartApplianceIP" placeholder="e.g., 192.168.1.100">
+                            </div>
+                            <div class="mb-3">
+                                <label for="smartApplianceProtocol" class="form-label">Protocol</label>
+                                <select class="form-select" id="smartApplianceProtocol">
+                                    <option value="wifi">Wi-Fi</option>
+                                    <option value="zigbee">Zigbee</option>
+                                    <option value="zwave">Z-Wave</option>
+                                    <option value="bluetooth">Bluetooth</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Add Appliance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle dark mode
+        const darkModeSwitch = document.getElementById('darkModeSwitch');
+        const htmlElement = document.documentElement;
+    
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            htmlElement.setAttribute('data-bs-theme', 'dark');
+            darkModeSwitch.checked = true;
+        }
+    
+        darkModeSwitch.addEventListener('change', () => {
+            if (darkModeSwitch.checked) {
+                htmlElement.setAttribute('data-bs-theme', 'dark');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                htmlElement.setAttribute('data-bs-theme', 'light');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    
+        // Show/hide smart appliance fields
+        document.getElementById('isSmartAppliance').addEventListener('change', function() {
+            document.getElementById('smartApplianceFields').style.display = this.checked ? 'block' : 'none';
+        });
+    
+        // Chart data and configuration
+        const timeLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
+        const usageData = [0.5, 0.6, 0.4, 0.3, 0.2, 0.3, 0.7, 1.2, 1.5, 1.3, 1.1, 1.0, 1.2, 1.1, 1.0, 1.2, 1.5, 1.7, 1.8, 1.5, 1.3, 1.0, 0.8, 0.6];
+        
+        // Real-time Energy Consumption Chart
+        const realTimeCtx = document.getElementById('realTimeChart').getContext('2d');
+        const realTimeChart = new Chart(realTimeCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Hourly Energy Usage (kW)',
+                    data: usageData,
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Energy: ${context.parsed.y} kW`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'kW'
+                        }
+                    }
+                }
+            }
+        });
+    
+        // Device Energy Breakdown Chart
+        const deviceCtx = document.getElementById('deviceUsageChart').getContext('2d');
+        const deviceData = {
+            labels: ['HVAC', 'Lighting', 'Kitchen', 'Entertainment', 'Laundry', 'Other'],
+            datasets: [{
+                label: 'Energy Usage by Device Category (kWh/day)',
+                data: [8.2, 2.5, 3.7, 1.8, 2.1, 1.2],
+                backgroundColor: [
+                    'rgba(78, 115, 223, 0.8)',
+                    'rgba(28, 200, 138, 0.8)',
+                    'rgba(246, 194, 62, 0.8)',
+                    'rgba(231, 74, 59, 0.8)',
+                    'rgba(54, 185, 204, 0.8)',
+                    'rgba(133, 135, 150, 0.8)'
+                ],
+                hoverBackgroundColor: [
+                    'rgba(78, 115, 223, 1)',
+                    'rgba(28, 200, 138, 1)',
+                    'rgba(246, 194, 62, 1)',
+                    'rgba(231, 74, 59, 1)',
+                    'rgba(54, 185, 204, 1)',
+                    'rgba(133, 135, 150, 1)'
+                ],
+                hoverBorderColor: 'rgba(234, 236, 244, 1)',
+                borderWidth: 1
+            }]
+        };
+        const deviceChart = new Chart(deviceCtx, {
+            type: 'doughnut',
+            data: deviceData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value}kWh (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    
+        // Weekly Usage Chart
+        const weeklyCtx = document.getElementById('weeklyUsageChart').getContext('2d');
+        const weeklyData = {
+            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            datasets: [{
+                label: 'Daily Energy Usage (kWh)',
+                data: [25, 25, 30, 35, 45, 35, 30],
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 1
+            }]
+        };
+        const weeklyChart = new Chart(weeklyCtx, {
+            type: 'bar',
+            data: weeklyData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'kWh'
+                        }
+                    }
+                }
+            }
+        });
+    
+        // Monthly Comparison Chart
+        const monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
+        const monthlyData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'This Year',
+                data: [620, 580, 550, 500, 480, 520, 580, 600, 540, 510, null, null],
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                tension: 0.3,
+                fill: true
+            }, {
+                label: 'Last Year',
+                data: [650, 610, 590, 560, 510, 570, 640, 650, 580, 540, 520, 590],
+                borderColor: '#858796',
+                borderDash: [5, 5],
+                backgroundColor: 'transparent',
+                tension: 0.3,
+                fill: false
+            }]
+        };
+        const monthlyChart = new Chart(monthlyCtx, {
+            type: 'line',
+            data: monthlyData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Monthly Energy Usage (kWh)'
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    
+        // Update real-time data
+        function updateRealTimeData() {
+            try {
+                const lastValue = usageData[usageData.length - 1];
+                const newValue = Math.max(0.1, Math.min(2.5, lastValue + (Math.random() - 0.5) * 0.3));
+                
+                usageData.shift();
+                usageData.push(newValue);
+                
+                realTimeChart.update();
+                
+                const currentUsageEl = document.getElementById('current-usage');
+                const todayUsageEl = document.getElementById('today-usage');
+                const costTodayEl = document.getElementById('cost-today');
+                const carbonFootprintEl = document.getElementById('carbon-footprint');
+    
+                currentUsageEl.textContent = newValue.toFixed(1);
+                const todayUsage = (parseFloat(todayUsageEl.textContent) + newValue/24).toFixed(1);
+                todayUsageEl.textContent = todayUsage;
+                costTodayEl.textContent = '$' + (parseFloat(todayUsage) * 0.15).toFixed(2);
+                carbonFootprintEl.textContent = (parseFloat(todayUsage) * 0.85).toFixed(1);
+            } catch (error) {
+                console.error('Error in updateRealTimeData:', error);
+            }
+        }
+    
+        // Initial values
+        document.getElementById('current-usage').textContent = '1.7';
+        document.getElementById('today-usage').textContent = '38.4';
+        document.getElementById('cost-today').textContent = '$5.76';
+        document.getElementById('carbon-footprint').textContent = '32.6';
+        document.getElementById('ml-updated').textContent = new Date().toLocaleTimeString();
+    
+        // Start the interval
+        setInterval(updateRealTimeData, 5000);
+    
+        // Device controls
+        const deviceSwitches = document.querySelectorAll('.device-status .form-check-input');
+        deviceSwitches.forEach(switchEl => {
+            switchEl.addEventListener('change', function() {
+                const deviceEl = this.closest('.device-status').querySelector('i');
+                if (this.checked) {
+                    deviceEl.classList.remove('device-off');
+                    deviceEl.classList.add('device-on');
+                } else {
+                    deviceEl.classList.remove('device-on');
+                    deviceEl.classList.add('device-off');
+                }
+                updateRealTimeData();
+            });
+        });
+    
+        // Function to get prediction from the backend
+        function getPrediction() {
+            const lights = document.getElementById("lights").value;
+            const T_in = document.getElementById("T_in").value;
+            const RH_in = document.getElementById("RH_in").value;
+            const T_out = document.getElementById("T_out").value;
+            const Windspeed = document.getElementById("Windspeed").value;
+
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    lights: parseFloat(lights),
+                    T_in: parseFloat(T_in),
+                    RH_in: parseFloat(RH_in),
+                    T_out: parseFloat(T_out),
+                    Windspeed: parseFloat(Windspeed)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("prediction-result").innerText = "Error: " + data.error;
+                } else {
+                    document.getElementById("prediction-result").innerText = `${data.predicted_consumption} Wh`;
+                    // Update ML-Based Predictions
+                    document.getElementById('ml-prediction').textContent = `${data.predicted_consumption} Wh`;
+                    document.getElementById('ml-savings').textContent = `${Math.round(data.predicted_consumption * 0.05)} Wh`; // 5% savings
+                    document.getElementById('ml-updated').textContent = new Date().toLocaleTimeString();
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("prediction-result").innerText = "Error: Unable to connect to the server.";
+            });
+        }
+
+        // Read query parameters and update the dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        const lights = urlParams.get('lights');
+        const T_in = urlParams.get('T_in');
+        const RH_in = urlParams.get('RH_in');
+        const T_out = urlParams.get('T_out');
+        const Windspeed = urlParams.get('Windspeed');
+        const predictedConsumption = urlParams.get('predicted_consumption');
+        const suggestion = urlParams.get('suggestion');
+
+        // Pre-fill the input fields in the ML Model Prediction section
+        if (lights) document.getElementById('lights').value = lights;
+        if (T_in) document.getElementById('T_in').value = T_in;
+        if (RH_in) document.getElementById('RH_in').value = RH_in;
+        if (T_out) document.getElementById('T_out').value = T_out;
+        if (Windspeed) document.getElementById('Windspeed').value = Windspeed;
+
+        // Update the ML Model Prediction result
+        if (predictedConsumption) {
+            document.getElementById('prediction-result').innerText = `${predictedConsumption} Wh`;
+        }
+
+        // Update the ML-Based Predictions section
+        if (predictedConsumption) {
+            document.getElementById('ml-prediction').textContent = `${predictedConsumption} Wh`;
+            document.getElementById('ml-savings').textContent = `${Math.round(predictedConsumption * 0.05)} Wh`; // 5% savings
+            document.getElementById('ml-accuracy').textContent = '95%'; // Keeping the accuracy as 95% as shown
+            document.getElementById('ml-updated').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Update the ML Recommendations section with the suggestion
+        if (suggestion) {
+            const recommendationsDiv = document.querySelector('.recommendations');
+            recommendationsDiv.innerHTML = `<strong>Energy Saving Tip</strong>: ${suggestion}`;
+        }
+    });
+    </script>
+</body>
+</html>
