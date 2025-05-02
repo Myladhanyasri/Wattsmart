@@ -67,22 +67,22 @@ How to Run the Project:
    ```bash
    git clone https://github.com/Myladhanyasri/Wattsmart.git
    cd Wattsmart
-**2.Create a virtual environment**
+2.**Create a virtual environment**
    ```bash
-  python -m venv venv
-  venv\Scripts\activate  # On Windows
-**3.Install Python dependencies**
+   python -m venv venv
+   venv\Scripts\activate  # On Windows
+3.**Install Python dependencies**
    ```bash
-  pip install -r requirements.txt
-4.Run the flask server
+   pip install -r requirements.txt
+4. **Run the flask server
     ```bash 
   cd Backend/ml_model
   python app.py
-**5.Open the frontend**
+5. **Open the frontend**
    ```bash
   Go to the Frontend/ folder
   Open index.html in your browser
-✅ Now your dashboard should be running with ML-powered predictions!
 
+✅ Now your dashboard should be running with ML-powered predictions!
 
 An example usage would be entering the following values on the form: Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s. After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage (e.g., ~60 Wh, depending on your model), potential savings (e.g., ~3 Wh), and a tip like "Reduce light usage to save 5% energy." This project is licensed under the MIT License, and you can find more details in the `LICENSE` file.
