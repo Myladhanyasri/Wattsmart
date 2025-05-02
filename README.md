@@ -68,14 +68,18 @@ How to Run the Project:
    git clone https://github.com/Myladhanyasri/Wattsmart.git
    cd Wattsmart
 **2.Create a virtual environment**
+   ```bash
   python -m venv venv
   venv\Scripts\activate  # On Windows
 **3.Install Python dependencies**
+   ```bash
   pip install -r requirements.txt
 4.Run the flask server
+    ```bash 
   cd Backend/ml_model
   python app.py
 **5.Open the frontend**
+   ```bash
   Go to the Frontend/ folder
   Open index.html in your browser
 ✅ Now your dashboard should be running with ML-powered predictions!
