@@ -68,21 +68,21 @@ How to Run the Project:
 git clone https://github.com/Myladhanyasri/Wattsmart.git
 cd Wattsmart
 2. 🌐 Create a virtual environment
-```bash
+ ```bash
 python -m venv venv
 venv\Scripts\activate
 
 3. 📦 Install dependencies
-```bash
+ ```bash
 pip install -r requirements.txt
 
 4. 🚀 Run the Flask server
-```bash
+ ```bash
 cd Backend/ml_model
 python app.py
 
 5. 🌐 Launch the frontend
-   ```bash
+  ```bash
   Go to the Frontend/ folder
   Open index.html in your browser
 
@@ -90,5 +90,6 @@ python app.py
 
 An example usage would be entering the following values on the form: 
 Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s.
-After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage (e.g., ~60 Wh, depending on your model), potential savings (e.g., ~3 Wh),
+After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage
+ (e.g., ~60 Wh, depending on your model), potential savings (e.g., ~3 Wh),
 and a tip like "Reduce light usage to save 5% energy." This project is licensed under the MIT License, and you can find more details in the `LICENSE` file.
