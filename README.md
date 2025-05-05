@@ -43,7 +43,7 @@ Wattsmart addresses this by:
 
 ## 📽️ Demo Video
 
-[![Watch Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)  
+[![Watch Demo]([https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID](https://youtu.be/urEdBIb8chk))  
 📌 *Click the image above to watch a walkthrough of Wattsmart in action.*
 
 ---
@@ -63,26 +63,29 @@ Wattsmart addresses this by:
 To run this project, you’ll need the following requirements: Python 3.8 or higher, a web browser (e.g., Chrome, Firefox), and Jupyter Notebook for training the model. The Python dependencies listed in `requirements.txt` are `flask==2.0.1`, `flask-cors==3.0.10`, `numpy==1.23.0`, `joblib==1.1.0`, `scikit-learn==1.0.2`, `pandas==1.4.3`, and `jupyter==1.0.0`. You also need a dataset file named `energy_data.csv` with columns `lights` (W), `T_in` (°C), `RH_in` (%), `T_out` (°C), `Windspeed` (m/s), and `Appliances` (Wh). Hardware-wise, a computer with at least 4GB RAM and 1GB free disk space is required.
 
 How to Run the Project:
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Myladhanyasri/Wattsmart.git
-   cd Wattsmart
-2.**Create a virtual environment**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate  # On Windows
-3.**Install Python dependencies**
-   ```bash
-   pip install -r requirements.txt
-4. **Run the flask server
-    ```bash 
-  cd Backend/ml_model
-  python app.py
-5. **Open the frontend**
+1. 🔄 Clone the repository
+git clone https://github.com/Myladhanyasri/Wattsmart.git
+cd Wattsmart
+
+2. 🌐 Create a virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+3. 📦 Install dependencies
+pip install -r requirements.txt
+
+4. 🚀 Run the Flask server
+cd Backend/ml_model
+python app.py
+
+5. 🌐 Launch the frontend
    ```bash
   Go to the Frontend/ folder
   Open index.html in your browser
 
 ✅ Now your dashboard should be running with ML-powered predictions!
 
-An example usage would be entering the following values on the form: Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s. After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage (e.g., ~60 Wh, depending on your model), potential savings (e.g., ~3 Wh), and a tip like "Reduce light usage to save 5% energy." This project is licensed under the MIT License, and you can find more details in the `LICENSE` file.
+An example usage would be entering the following values on the form: 
+Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s.
+After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage (e.g., ~60 Wh, depending on your model), potential savings (e.g., ~3 Wh),
+and a tip like "Reduce light usage to save 5% energy." This project is licensed under the MIT License, and you can find more details in the `LICENSE` file.
