@@ -82,7 +82,7 @@ python app.py
   Open index.html in your browser
 
 ✅ Now your dashboard should be running with ML-powered predictions!
-
+## Example usage
 An example usage would be entering the following values on the form: 
 Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s.
 After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage
