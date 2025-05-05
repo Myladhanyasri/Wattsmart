@@ -43,8 +43,7 @@ Wattsmart addresses this by:
 
 ## 📽️ Demo Video
 
-[![Watch Demo]([https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID](https://youtu.be/urEdBIb8chk))  
-📌 *Click the image above to watch a walkthrough of Wattsmart in action.*
+(https://www.youtube.com/watch?v=urEdBIb8chk)
 
 ---
 
