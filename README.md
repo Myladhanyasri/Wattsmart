@@ -57,33 +57,37 @@ Wattsmart addresses this by:
 
 To run this project, you’ll need the following requirements: Python 3.8 or higher, a web browser (e.g., Chrome, Firefox), and Jupyter Notebook for training the model. The Python dependencies listed in `requirements.txt` are `flask==2.0.1`, `flask-cors==3.0.10`, `numpy==1.23.0`, `joblib==1.1.0`, `scikit-learn==1.0.2`, `pandas==1.4.3`, and `jupyter==1.0.0`. You also need a dataset file named `energy_data.csv` with columns `lights` (W), `T_in` (°C), `RH_in` (%), `T_out` (°C), `Windspeed` (m/s), and `Appliances` (Wh). Hardware-wise, a computer with at least 4GB RAM and 1GB free disk space is required.
 
-## How to Run the Project:
-1. **🔁 Clone the Repository**
-  ```bash
-  git clone https://github.com/Myladhanyasri/Wattsmart.git
-  cd Wattsmart
+## 🚀 How to Run the Project
+```bash
+# 1. Clone the repository
+git clone https://github.com/Myladhanyasri/Wattsmart.git
+cd Wattsmart
 
-2. **🌐 Create a virtual environment** 
- ```bash
+# 2. Create a virtual environment
+# For Windows:
 python -m venv venv
 venv\Scripts\activate
 
-3. 📦 Install dependencies
- ```bash
+# For macOS/Linux:
+# python3 -m venv venv
+# source venv/bin/activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
-4. 🚀 Run the Flask server
- ```bash
+# 4. Run the Flask server
 cd Backend/ml_model
 python app.py
 
-5. 🌐 Launch the frontend
-  ```bash
-  Go to the Frontend/ folder
-  Open index.html in your browser
+# 5. Launch the frontend
+cd ../../Frontend
+start index.html       # For Windows
+# open index.html      # For macOS
+# xdg-open index.html  # For Linux
 
 ✅ Now your dashboard should be running with ML-powered predictions!
-## Example usage
+
+## Example Usage
 An example usage would be entering the following values on the form: 
 Lights Usage as 1 W, Indoor Temperature as 12°C, Indoor Humidity as 22%, Outdoor Temperature as 23°C, and Wind Speed as 22 m/s.
 After clicking "Predict Appliance Lights Usage," the dashboard will display the predicted energy usage
