@@ -65,7 +65,7 @@ git clone https://github.com/Myladhanyasri/Wattsmart.git
 cd Wattsmart
 
 # 2. Create a virtual environment
-```bash
+
 # For Windows:
 python -m venv venv
 venv\Scripts\activate
@@ -75,16 +75,16 @@ venv\Scripts\activate
 # source venv/bin/activate
 
 # 3. Install dependencies
-```bash
+
 pip install -r requirements.txt
 
 # 4. Run the Flask server
-```bash
+
 cd Backend/ml_model
 python app.py
 
 # 5. Launch the frontend
-```bash
+
 cd ../../Frontend
 start index.html       # For Windows
 # open index.html      # For macOS
