@@ -58,12 +58,14 @@ Wattsmart addresses this by:
 To run this project, you’ll need the following requirements: Python 3.8 or higher, a web browser (e.g., Chrome, Firefox), and Jupyter Notebook for training the model. The Python dependencies listed in `requirements.txt` are `flask==2.0.1`, `flask-cors==3.0.10`, `numpy==1.23.0`, `joblib==1.1.0`, `scikit-learn==1.0.2`, `pandas==1.4.3`, and `jupyter==1.0.0`. You also need a dataset file named `energy_data.csv` with columns `lights` (W), `T_in` (°C), `RH_in` (%), `T_out` (°C), `Windspeed` (m/s), and `Appliances` (Wh). Hardware-wise, a computer with at least 4GB RAM and 1GB free disk space is required.
 
 ## 🚀 How to Run the Project
-```bash
+
 # 1. Clone the repository
+```bash
 git clone https://github.com/Myladhanyasri/Wattsmart.git
 cd Wattsmart
 
 # 2. Create a virtual environment
+```bash
 # For Windows:
 python -m venv venv
 venv\Scripts\activate
@@ -73,13 +75,16 @@ venv\Scripts\activate
 # source venv/bin/activate
 
 # 3. Install dependencies
+```bash
 pip install -r requirements.txt
 
 # 4. Run the Flask server
+```bash
 cd Backend/ml_model
 python app.py
 
 # 5. Launch the frontend
+```bash
 cd ../../Frontend
 start index.html       # For Windows
 # open index.html      # For macOS
